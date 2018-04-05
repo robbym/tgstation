@@ -44,6 +44,7 @@ PROCESSING_SUBSYSTEM_DEF(circuit)
 
 
 	circuit_fabricator_recipe_list["Assemblies"] = list(
+		/obj/item/integrated_circuit/subcircuit,
 		/obj/item/device/electronic_assembly/default,
 		/obj/item/device/electronic_assembly/calc,
 		/obj/item/device/electronic_assembly/clam,

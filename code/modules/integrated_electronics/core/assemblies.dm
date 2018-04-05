@@ -52,6 +52,7 @@
 		COLOR_ASSEMBLY_BLUE,
 		COLOR_ASSEMBLY_PURPLE
 		)
+	var/subcircuit = FALSE
 
 /obj/item/device/electronic_assembly/examine(mob/user)
 	. = ..()
@@ -124,10 +125,11 @@
 	HTML += "<a href='?src=[REF(src)]'>\[Refresh\]</a>  |  <a href='?src=[REF(src)];rename=1'>\[Rename\]</a><br>"
 	HTML += "[total_part_size]/[max_components] ([round((total_part_size / max_components) * 100, 0.1)]%) space taken up in the assembly.<br>"
 	HTML += "[total_complexity]/[max_complexity] ([round((total_complexity / max_complexity) * 100, 0.1)]%) maximum complexity.<br>"
-	if(battery)
-		HTML += "[round(battery.charge, 0.1)]/[battery.maxcharge] ([round(battery.percent(), 0.1)]%) cell charge. <a href='?src=[REF(src)];remove_cell=1'>\[Remove\]</a>"
-	else
-		HTML += "<span class='danger'>No power cell detected!</span>"
+	if(!subcircuit)
+		if(battery)
+			HTML += "[round(battery.charge, 0.1)]/[battery.maxcharge] ([round(battery.percent(), 0.1)]%) cell charge. <a href='?src=[REF(src)];remove_cell=1'>\[Remove\]</a>"
+		else
+			HTML += "<span class='danger'>No power cell detected!</span>"
 	HTML += "<br><br>"
 
 
