@@ -16,6 +16,7 @@
 
 /obj/item/device/electronic_assembly/subcircuit_internal/Initialize()
 	. = ..()
+	interface.forceMove(get_object())
 	interface.assembly = src
 	assembly_components |= interface
 
@@ -119,9 +120,7 @@
 
 	HTML += "</body></html>"
 
-	user << browse(HTML, "window=circuit-[REF(src)];size=[window_width]x[window_height];border=1;can_resize=1;can_close=1;can_minimize=1")
-
-	//onclose(user, "assembly-[REF(src.assembly)]")
+	user << browse(HTML, "window=subcircuit-[REF(src)];size=[window_width]x[window_height];border=1;can_resize=1;can_close=1;can_minimize=1")
 
 /obj/item/integrated_circuit/subcircuit/Topic(href, href_list)
 	if(!href_list["edit"])
@@ -180,12 +179,16 @@
 	internal.interface.activators.Cut()
 
 	for(var/datum/integrated_io/pin in inputs)
-		internal.interface.outputs.Add(new pin.type(src, pin.name, pin.data, IC_OUTPUT, pin.ord))
+		internal.interface.outputs.Add(new pin.type(internal.interface, pin.name, pin.data, IC_OUTPUT, pin.ord))
 
 	for(var/datum/integrated_io/pin in outputs)
-		internal.interface.inputs.Add(new pin.type(src, pin.name, pin.data, IC_INPUT, pin.ord))
+		internal.interface.inputs.Add(new pin.type(internal.interface, pin.name, pin.data, IC_INPUT, pin.ord))
 
 	for(var/datum/integrated_io/pin in activators)
-		internal.interface.activators.Add(new /datum/integrated_io/activate(src, pin.name, !pin.data, pin.type, pin.ord))
+		internal.interface.activators.Add(new /datum/integrated_io/activate(internal.interface, pin.name, !pin.data, pin.type, pin.ord))
 
-/obj/item/integrated_circuit/subcircuit/do_work()
+/obj/item/integrated_circuit/subcircuit/do_work(var/ord)
+	for(var/I=1; I<=inputs.len; I++)
+		internal.interface.set_pin_data(IC_OUTPUT, I, inputs[I].data)
+	internal.interface.push_data()
+	internal.interface.activate_pin(ord)
